@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payroll Reports</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>💼 Payroll System</h2>
+            <p>Enterprise Management</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="/"><i>📊</i>Dashboard</a></li>
+            <li><a href="/add"><i>➕</i>Add Employee</a></li>
+            <li><a href="/attendance"><i>📋</i>Attendance</a></li>
+            <li><a href="/payroll"><i>💰</i>Payroll</a></li>
+            <li><a href="/reports" class="active"><i>📈</i>Reports</a></li>
+            <li><a href="/logout"><i>🚪</i>Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>📈 Payroll Reports</h1>
+            <p>View comprehensive payroll and attendance reports</p>
+        </div>
+
+        <div class="content-section">
+            <div style="padding: 18px 20px; margin-bottom: 24px; border-radius: 10px; background: linear-gradient(135deg, rgba(23, 59, 87, 0.08), rgba(30, 111, 120, 0.08)); border: 1px solid rgba(23, 59, 87, 0.12);">
+                <h3 style="color: #173b57; margin-bottom: 8px;">Payroll insights</h3>
+                <p style="color: #556; margin: 0;">Use the view action to open the detailed payroll slip for each processed month.</p>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button onclick="window.print()" class="btn btn-primary">🖨️ Print Report</button>
+                <a href="/" class="btn btn-secondary">🏠 Back to Home</a>
+            </div>
+
+            <h3 style="color: #173b57; margin-top: 30px; margin-bottom: 20px;">💰 Payroll Summary</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Emp ID</th>
+                        <th>Pay Month</th>
+                        <th>Payroll ID</th>
+                        <th>Net Salary (₹)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if reports_data %}
+                        {% for record in reports_data %}
+                        <tr>
+                            <td>{{ record[0] }}</td>
+                            <td>#{{ record[1] }}</td>
+                            <td>{{ record[4]|default('N/A', true) }}</td>
+                            <td>{{ record[3]|default('N/A', true) }}</td>
+                            <td><strong>₹ {{ record[2]|default('0', true) }}</strong></td>
+                            <td>
+                                <a href="/reports/view/{{ record[3] }}" class="btn btn-report-view">View Report</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 30px; color: #666;">
+                            No payroll records found
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <h3 style="color: #173b57; margin-top: 30px; margin-bottom: 20px;">📊 Attendance Summary</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Days Present</th>
+                        <th>Attendance Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if attendance_data %}
+                        {% for record in attendance_data %}
+                        <tr>
+                            <td>{{ record[0] }}</td>
+                            <td><strong>{{ record[1] }} days</strong></td>
+                            <td>
+                                {% if record[1] >= 20 %}
+                                    <span class="badge success">✅ Good</span>
+                                {% elif record[1] >= 15 %}
+                                    <span class="badge warning">⚠️ Fair</span>
+                                {% else %}
+                                    <span class="badge danger">❌ Poor</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 30px; color: #666;">
+                            No attendance records found
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <div style="margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #f6f8fb, #eef4f7); border-radius: 8px; text-align: center; color: #556; border: 1px solid rgba(23, 59, 87, 0.08);">
+                <p>Report Generated: {{ today }}</p>
+                <p style="font-size: 0.9em;">This is an official payroll report. For discrepancies, contact HR Department.</p>
+            </div>
+    </div>
+</div>
+
+<script>
+    const today = new Date();
+    document.querySelector('p').innerHTML = 'Report Generated: ' + today.toLocaleDateString('en-IN');
+</script>
+
+</body>
+</html>

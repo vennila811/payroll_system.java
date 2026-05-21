@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payslips - Payroll System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .navbar {
+            background: linear-gradient(135deg, #173b57 0%, #1e6f78 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+        
+        .navbar-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .navbar-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .main-content {
+            margin-left: 0;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h1 {
+            color: #173b57;
+            margin-top: 0;
+            border-bottom: 2px solid #1e6f78;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background-color: #f0f0f0;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #173b57;
+            color: #173b57;
+            font-weight: 600;
+        }
+        
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+        
+        .btn-primary {
+            background-color: #173b57;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #102a3c;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2>All Payslips</h2>
+    <div class="navbar-links">
+        <a href="/employee-dashboard">Dashboard</a>
+        <a href="/employee-payslips">Payslips</a>
+        <a href="/employee-attendance">Attendance</a>
+        <a href="/employee-logout">Logout</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="section">
+        <h1>All Payslips</h1>
+        
+        {% if payslips %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Basic Salary</th>
+                    <th>Gross Salary</th>
+                    <th>Deductions</th>
+                    <th>Net Salary</th>
+                    <th>Generated On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payslip in payslips %}
+                <tr>
+                    <td>{{ payslip[2] }}</td>
+                    <td>₹ {{ "{:,.2f}".format(payslip[3]) }}</td>
+                    <td>₹ {{ "{:,.2f}".format(payslip[4]) }}</td>
+                    <td>₹ {{ "{:,.2f}".format(payslip[5]) }}</td>
+                    <td><strong>₹ {{ "{:,.2f}".format(payslip[6]) }}</strong></td>
+                    <td>{{ payslip[7].strftime('%Y-%m-%d') if payslip[7] else 'N/A' }}</td>
+                    <td>
+                        <a href="/employee-payslip/{{ payslip[0] }}" class="btn btn-primary">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <p>No payslips found.</p>
+            <p style="font-size: 14px; margin-top: 10px;">Please contact HR to process your payroll.</p>
+        </div>
+        {% endif %}
+        
+        <div style="margin-top: 20px;">
+            <a href="/employee-dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

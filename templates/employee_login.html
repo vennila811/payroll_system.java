@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #173b57 0%, #1e6f78 100%);
+        }
+        
+        .login-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-card h1 {
+            color: #173b57;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .login-card p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-form label {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .login-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: #173b57;
+            box-shadow: 0 0 5px rgba(23, 59, 87, 0.2);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background-color: #173b57;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-primary:hover {
+            background-color: #102a3c;
+        }
+        
+        .login-shell {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #173b57 0%, #1e6f78 100%);
+        }
+        
+        .role-selection {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .role-btn {
+            padding: 15px 25px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #333;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .role-btn:hover {
+            border-color: #173b57;
+            color: #173b57;
+            transform: translateY(-2px);
+        }
+        
+        .role-btn.active {
+            background-color: #173b57;
+            color: white;
+            border-color: #173b57;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-shell">
+    <div class="login-card">
+        <h1>Employee Portal</h1>
+        <p>Sign in to access your payroll information</p>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <div style="text-align: center; margin-bottom: 25px;">
+            <a href="/login" class="role-btn" style="margin-right: 10px;">Admin Login</a>
+            <span class="role-btn active">Employee Login</span>
+        </div>
+
+        <form method="POST" class="login-form">
+            <label>Employee ID</label>
+            <input type="number" name="emp_id" required placeholder="Enter your employee ID" autofocus>
+
+            <label>Password</label>
+            <input type="password" name="password" required placeholder="Enter your password">
+
+            <button type="submit" class="btn btn-primary">Sign In</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+            <p>Don't have a password? Contact your HR department.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

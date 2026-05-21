@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payslip</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .print-btn {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .print-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>💼 Payroll System</h2>
+            <p>Enterprise Management</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="/"><i>📊</i>Dashboard</a></li>
+            <li><a href="/add"><i>➕</i>Add Employee</a></li>
+            <li><a href="/attendance"><i>📋</i>Attendance</a></li>
+            <li><a href="/payroll"><i>💰</i>Payroll</a></li>
+            <li><a href="/reports"><i>📈</i>Reports</a></li>
+            <li><a href="/logout"><i>🚪</i>Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>📄 Employee Payslip</h1>
+            <p>Official salary slip for the selected period</p>
+        </div>
+
+        <div class="content-section">
+            <div class="print-btn">
+                <button onclick="window.print()" class="btn btn-primary">🖨️ Print Payslip</button>
+                <a href="/" class="btn btn-secondary" style="margin-left: 10px;">🏠 Back to Home</a>
+            </div>
+
+        {% if p %}
+        <div class="payslip">
+            <div class="payslip-header">
+                <h2>📄 SALARY SLIP</h2>
+                <p style="margin-top: 10px; color: #666;">{{ today }}</p>
+            </div>
+
+            <div class="payslip-section">
+                <h4>Employee & Payroll Information</h4>
+                <div class="row">
+                    <span><strong>Employee Name:</strong></span>
+                    <span>{{ p[16] }}</span>
+                </div>
+                <div class="row">
+                    <span><strong>Employee ID:</strong></span>
+                    <span>{{ p[1] }}</span>
+                </div>
+                <div class="row">
+                    <span><strong>Designation:</strong></span>
+                    <span>{{ p[17]|default('Employee', true) }}</span>
+                </div>
+                <div class="row">
+                    <span><strong>Department:</strong></span>
+                    <span>{{ p[18]|default('Unassigned', true) }}</span>
+                </div>
+                <div class="row">
+                    <span><strong>Payroll Month:</strong></span>
+                    <span>{{ p[2] }}</span>
+                </div>
+                <div class="row">
+                    <span><strong>Generated On:</strong></span>
+                    <span>{{ p[15].strftime('%d %B %Y') if p[15] else today }}</span>
+                </div>
+            </div>
+
+            <div class="payslip-section">
+                <h4>Earnings</h4>
+                <div class="row">
+                    <span>Basic Salary</span>
+                    <span>₹ {{ p[3]|default('0', true) }}</span>
+                </div>
+                <div class="row">
+                    <span>Bonus</span>
+                    <span>₹ {{ p[4]|default('0', true) }}</span>
+                </div>
+                <div class="row">
+                    <span>Overtime Pay ({{ p[5] }} hours)</span>
+                    <span>₹ {{ p[7]|default('0', true) }}</span>
+                </div>
+                <div class="row total" style="color: #28a745;">
+                    <span>Gross Salary</span>
+                    <span>₹ {{ p[12]|default('0', true) }}</span>
+                </div>
+            </div>
+
+            <div class="payslip-section">
+                <h4>Deductions</h4>
+                <div class="row">
+                    <span>PF</span>
+                    <span>₹ {{ p[8]|default('0', true) }}</span>
+                </div>
+                <div class="row">
+                    <span>Professional Tax</span>
+                    <span>₹ {{ p[9]|default('0', true) }}</span>
+                </div>
+                <div class="row">
+                    <span>Other Deductions</span>
+                    <span>₹ {{ p[10]|default('0', true) }}</span>
+                </div>
+                <div class="row">
+                    <span>Income Tax (TDS)</span>
+                    <span>₹ {{ p[11]|default('0', true) }}</span>
+                </div>
+                <div class="row total" style="color: #dc3545;">
+                    <span>Total Deductions</span>
+                    <span>₹ {{ p[13]|default('0', true) }}</span>
+                </div>
+            </div>
+
+            <div class="payslip-section">
+                <div class="row total" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 1.3em;">
+                    <span>NET SALARY PAYABLE</span>
+                    <span>₹ {{ p[14]|default('0', true) }}</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 0.9em;">
+                <p>This is a system-generated document. No signature is required.</p>
+                <p>For queries, contact HR Department</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="error">
+            ❌ No payslip found for this employee. Please process payroll first.
+        </div>
+        <a href="/payroll" class="btn btn-primary">💰 Go to Payroll</a>
+        {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

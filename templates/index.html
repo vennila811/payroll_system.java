@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payroll Management System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>💼 Payroll System</h2>
+            <p>Enterprise Management</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="/" class="active"><i>📊</i>Dashboard</a></li>
+            <li><a href="/add"><i>➕</i>Add Employee</a></li>
+            <li><a href="/attendance"><i>📋</i>Attendance</a></li>
+            <li><a href="/payroll"><i>💰</i>Payroll</a></li>
+            <li><a href="/reports"><i>📈</i>Reports</a></li>
+            <li><a href="/logout"><i>🚪</i>Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>📊 Dashboard</h1>
+            <p>Overview of your payroll management system</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="stat-card">
+                <h3>{{ total_employees }}</h3>
+                <p>Total Employees</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ total_attendance }}</h3>
+                <p>Attendance Records</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ total_payroll }}</h3>
+                <p>Payroll Processed</p>
+            </div>
+            <div class="stat-card">
+                <h3>₹{{ total_salary|default('0', true) }}</h3>
+                <p>Total Monthly Salary</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">👥 Employee Directory</h2>
+
+            {% if employees %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Position</th>
+                        <th>Department</th>
+                        <th>Salary</th>
+                        <th>Status</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees %}
+                    <tr>
+                        <td><strong>{{ emp[0] }}</strong></td>
+                        <td>{{ emp[1] }}</td>
+                        <td>{{ emp[2] }}</td>
+                        <td>{{ emp[3] }}</td>
+                        <td>{{ emp[4] }}</td>
+                        <td>₹{{ emp[5]|default('0', true) }}</td>
+                        <td><span class="badge success">{{ emp[7]|default('Active', true) }}</span></td>
+                        <td>{{ emp[6] }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="/edit/{{ emp[0] }}" class="btn btn-warning">Edit</a>
+                                <a href="/delete/{{ emp[0] }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this employee?')">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; padding: 40px; color: #666;">No employees found</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

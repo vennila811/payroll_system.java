@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payroll Processing</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>💼 Payroll System</h2>
+            <p>Enterprise Management</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="/"><i>📊</i>Dashboard</a></li>
+            <li><a href="/add"><i>➕</i>Add Employee</a></li>
+            <li><a href="/attendance"><i>📋</i>Attendance</a></li>
+            <li><a href="/payroll" class="active"><i>💰</i>Payroll</a></li>
+            <li><a href="/reports"><i>📈</i>Reports</a></li>
+            <li><a href="/logout"><i>🚪</i>Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>💰 Payroll Processing</h1>
+            <p>Calculate and process employee salaries</p>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">💰 Payroll Processing</h2>
+        
+        <form method="POST" id="payrollForm">
+            <h3 style="color: #667eea; margin-bottom: 20px;">Process Monthly Payroll</h3>
+
+            <div class="form-group">
+                <div class="form-item">
+                    <label>Select Employee *</label>
+                    <select name="emp_id" required onchange="updateSalaryDisplay()">
+                        <option value="">-- Select Employee --</option>
+                        {% for emp in employees %}
+                            <option value="{{ emp[0] }}" data-salary="{{ emp[2]|default('0', true) }}">{{ emp[1] }} ({{ emp[3]|default('Employee', true) }}) - {{ emp[4]|default('Unassigned', true) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>Payroll Month *</label>
+                    <input type="month" name="month" required>
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">Earnings</h4>
+
+            <div class="form-group">
+                <div class="form-item">
+                    <label>Basic Salary (₹)</label>
+                    <input type="number" id="basicSalary" readonly step="0.01" value="0">
+                </div>
+                <div class="form-item">
+                    <label>Performance Bonus (₹)</label>
+                    <input type="number" name="bonus" step="0.01" value="0" min="0" id="bonus">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-item">
+                    <label>Overtime Hours</label>
+                    <input type="number" name="hours" step="0.5" value="0" min="0" id="overtimeHours">
+                </div>
+                <div class="form-item">
+                    <label>Overtime Pay per Hour (₹)</label>
+                    <input type="number" id="overtimeRate" step="0.01" value="200" readonly style="background: #f0f0f0;">
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">Deductions</h4>
+
+            <div class="form-group">
+                <div class="form-item">
+                    <label>PF (Provident Fund) (₹)</label>
+                    <input type="number" name="pf" step="0.01" value="0" min="0" id="pf">
+                </div>
+                <div class="form-item">
+                    <label>Professional Tax (₹)</label>
+                    <input type="number" name="prof_tax" step="0.01" value="0" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-item">
+                    <label>Other Deductions (₹)</label>
+                    <input type="number" name="deduction" step="0.01" value="0" min="0">
+                </div>
+                <div class="form-item">
+                    <label>Income Tax (TDS) (₹)</label>
+                    <input type="number" name="tax" step="0.01" value="0" min="0">
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">Summary</h4>
+
+            <div class="form-group">
+                <div class="form-item">
+                    <label><strong>Gross Salary:</strong></label>
+                    <input type="text" id="grossSalary" readonly value="₹ 0" style="background: #f8f9fa; font-weight: bold;">
+                </div>
+                <div class="form-item">
+                    <label><strong>Total Deductions:</strong></label>
+                    <input type="text" id="totalDeductions" readonly value="₹ 0" style="background: #f8f9fa; font-weight: bold;">
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <h3 style="color: #667eea; margin-bottom: 10px;">Net Salary Payable</h3>
+                <div style="font-size: 2em; color: #28a745; font-weight: bold;">₹ <span id="netSalary">0</span></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button type="submit" class="btn btn-primary">✅ Process Payroll & Generate Payslip</button>
+                <a href="/" class="btn btn-secondary" style="margin-left: 10px;">🏠 Back to Home</a>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Store employee salary data
+const employeeData = {
+    {% for emp in employees %}'{{ emp[0] }}': '{{ emp[2]|default('0', true) }}',{% endfor %}
+};
+
+function updateSalaryDisplay() {
+    const select = document.querySelector('select[name="emp_id"]');
+    const salary = employeeData[select.value] || '0';
+    document.getElementById('basicSalary').value = salary;
+    calculateNetSalary();
+}
+
+function calculateNetSalary() {
+    const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+    const bonus = parseFloat(document.querySelector('input[name="bonus"]').value) || 0;
+    const hours = parseFloat(document.querySelector('input[name="hours"]').value) || 0;
+    const overtimeRate = parseFloat(document.getElementById('overtimeRate').value) || 0;
+    const overtime = hours * overtimeRate;
+    
+    const pf = parseFloat(document.querySelector('input[name="pf"]').value) || 0;
+    const profTax = parseFloat(document.querySelector('input[name="prof_tax"]').value) || 0;
+    const deduction = parseFloat(document.querySelector('input[name="deduction"]').value) || 0;
+    const tax = parseFloat(document.querySelector('input[name="tax"]').value) || 0;
+    
+    const grossSalary = basic + bonus + overtime;
+    const totalDeductions = pf + profTax + deduction + tax;
+    const net = grossSalary - totalDeductions;
+    
+    document.getElementById('grossSalary').value = '₹ ' + grossSalary.toFixed(2);
+    document.getElementById('totalDeductions').value = '₹ ' + totalDeductions.toFixed(2);
+    document.getElementById('netSalary').textContent = net.toFixed(2);
+}
+
+// Add event listeners for real-time calculation
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('change', calculateNetSalary);
+    input.addEventListener('input', calculateNetSalary);
+});
+</script>
+
+</body>
+</html>
